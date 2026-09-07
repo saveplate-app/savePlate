@@ -1,0 +1,35 @@
+# Build output
+target/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+logs/
+
+# Secrets — application-dev.yml contient des valeurs en dur, jamais commité
+application-dev.yml
+application-dev.yaml
+*.pem
+*.p12
+*.jks
+*.key
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+HELP.md
