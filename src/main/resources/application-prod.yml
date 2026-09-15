@@ -7,6 +7,10 @@ spring:
   jpa:
     show-sql: false
 
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
 logging:
   level:
     com.saveplate.api: INFO
