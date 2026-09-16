@@ -2,6 +2,7 @@ package com.saveplate.api.service.impl;
 
 
 import com.saveplate.api.dto.auth.AuthResponse;
+import com.saveplate.api.dto.auth.LoginRequest;
 import com.saveplate.api.dto.auth.RegisterRequest;
 import com.saveplate.api.entities.User;
 import com.saveplate.api.entities.enums.Role;
@@ -15,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -31,8 +34,11 @@ public class AuthServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private AuthenticationManager authenticationManager;
     @InjectMocks
     private AuthServiceImpl authService;
+
 
     @Test
     void register_shouldCreateUserAndReturnToken_withEmailIsnotTaken(){
@@ -61,4 +67,32 @@ public class AuthServiceImplTest {
         assertThrows(EmailAlreadyExistsException.class,()->authService.register(request));
         verify(userRepository,never()).save(any());
     }
+    @Test
+    void login_shouldReturnToken_whenCredentialsAreValid(){
+        String email ="saadboumahdi@gmail.com";
+        LoginRequest request = new LoginRequest(email,"password123");
+        User user = new User();
+        user.setEmail(email);
+        user.setRole(Role.CLIENT);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(jwtService.generateToken(email,"CLIENT")).thenReturn("fake.jwt.token");
+
+        AuthResponse response = authService.login(request);
+        assertThat(response.token()).isEqualTo("fake.jwt.token");
+        assertThat(response.email()).isEqualTo(email);
+        assertThat(response.role()).isEqualTo("CLIENT");
+
+        verify(authenticationManager).authenticate(any());
+    }
+
+    @Test
+    void login_shouldThrowBadCredentialsException_whenCredentialsAreInvalid(){
+        String email ="saadboumahdi@gmail.com";
+        LoginRequest request = new LoginRequest(email,"wrongPassword");
+        when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Bad Credentails"));
+        assertThrows(BadCredentialsException.class,()-> authService.login(request));
+        verify(jwtService,never()).generateToken(any(),any());
+
+    }
+
 }
