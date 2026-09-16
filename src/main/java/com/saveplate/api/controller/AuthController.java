@@ -1,6 +1,7 @@
 package com.saveplate.api.controller;
 
 import com.saveplate.api.dto.auth.AuthResponse;
+import com.saveplate.api.dto.auth.LoginRequest;
 import com.saveplate.api.dto.auth.RegisterRequest;
 import com.saveplate.api.service.AuthService;
 import jakarta.validation.Valid;
@@ -13,15 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/v1/register")
+    @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request){
         AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request){
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
