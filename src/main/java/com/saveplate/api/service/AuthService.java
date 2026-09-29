@@ -1,10 +1,11 @@
 package com.saveplate.api.service;
 
-import com.saveplate.api.dto.auth.AuthResponse;
-import com.saveplate.api.dto.auth.LoginRequest;
-import com.saveplate.api.dto.auth.RegisterRequest;
+import com.saveplate.api.dto.auth.*;
 
 public interface AuthService {
     AuthResponse register(RegisterRequest request);
     AuthResponse login(LoginRequest request);
+    ForgotPasswordResponse forgotPassword(ForgotPasswordRequest request);
+    void resetPassword(ResetPasswordRequest request);
+
 }
