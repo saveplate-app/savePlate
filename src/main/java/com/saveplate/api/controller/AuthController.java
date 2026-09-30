@@ -1,8 +1,6 @@
 package com.saveplate.api.controller;
 
-import com.saveplate.api.dto.auth.AuthResponse;
-import com.saveplate.api.dto.auth.LoginRequest;
-import com.saveplate.api.dto.auth.RegisterRequest;
+import com.saveplate.api.dto.auth.*;
 import com.saveplate.api.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +27,17 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request){
         AuthResponse response = authService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
+        ForgotPasswordResponse response = authService.forgotPassword(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request){
+        authService.resetPassword(request);
+        return ResponseEntity.noContent().build();
     }
 }
